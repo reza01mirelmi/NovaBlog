@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import authorRouter from "./routes/author.routes";
 import postRouter from "./routes/post.routes";
 
@@ -7,8 +7,10 @@ const app = express();
 app.use(express.json());
 app.use("/api/authors", authorRouter);
 app.use("/api/posts", postRouter);
-
-app.use((req, res, next) => {
+app.get("/api", (req: Request, res: Response) => {
+  res.status(200).json({ message: "hello" });
+});
+app.use((req: Request, res: Response, next: NextFunction) => {
   const err: any = new Error(`Can't find ${req.originalUrl}`);
   err.statusCode = 404;
   next(err);
