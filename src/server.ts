@@ -3,7 +3,7 @@ import app from "./app";
 import "dotenv/config";
 
 const PORT = process.env.PORT;
-const MONGO_URL = process.env.MONGO_URL as string;
+const MONGO_URL = process.env.MONGO_URL!;
 
 mongoose
   .connect(MONGO_URL)

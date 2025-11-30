@@ -1,5 +1,8 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 import { ModelAuthorsType } from "../Types/author.type";
+
+export type AuthorDocument = ModelAuthorsType &
+  Document & { _id: Types.ObjectId };
 
 const authorSchema = new Schema<ModelAuthorsType>(
   {
@@ -28,7 +31,7 @@ const authorSchema = new Schema<ModelAuthorsType>(
       default: "USER",
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "authors" }
 );
 
 authorSchema.virtual("posts", {
@@ -40,4 +43,4 @@ authorSchema.virtual("posts", {
 authorSchema.set("toJSON", { virtuals: true });
 authorSchema.set("toObject", { virtuals: true });
 
-export default model<ModelAuthorsType>("Author", authorSchema);
+export default model("authors", authorSchema);

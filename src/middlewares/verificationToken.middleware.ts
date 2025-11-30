@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import authorModel from "./../models/author.model";
+import authorModel from "../models/author.model";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
