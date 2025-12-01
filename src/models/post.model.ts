@@ -24,7 +24,7 @@ const postSchema = new Schema<modelPostType>(
       default: "draft",
     },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "posts" }
 );
 
-export default model<modelPostType>("Post", postSchema);
+export default model<modelPostType>("posts", postSchema);
