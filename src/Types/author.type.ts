@@ -1,4 +1,4 @@
-export interface ModelAuthorsType {
+export interface AuthorDTO {
   _id?: string;
   name: string;
   email: string;
@@ -7,5 +7,7 @@ export interface ModelAuthorsType {
   role: RoleType;
   createdAt?: Date;
   updatedAt?: Date;
+  passwordChangedAt?: Date;
 }
 export type RoleType = "ADMIN" | "USER";
+

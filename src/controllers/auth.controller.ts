@@ -2,13 +2,17 @@ import { Request, Response, NextFunction } from "express";
 import validAuthor from "./../validations/author.validation";
 import validAuthorLogin from "./../validations/login.validation";
 import {
-  registerAuthor,
-  loginAuthor,
-  getMeAuthor,
+  registerUserService,
+  loginUserService,
+  getMeUserService,
 } from "./../services/auth.service";
 import { RegisterDTO, LoginDTO } from "../Types/auth.type";
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
+const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const input: RegisterDTO = req.body;
 
@@ -18,7 +22,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).json(isBodyValidated);
     }
 
-    const result = await registerAuthor(input);
+    const result = await registerUserService(input);
 
     if (!result) {
       return res
@@ -44,7 +48,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const input: LoginDTO = req.body;
     const isBodyValidated = validAuthorLogin(input);
@@ -53,7 +57,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).json(isBodyValidated);
     }
 
-    const result = await loginAuthor(input);
+    const result = await loginUserService(input);
 
     if (result === null) {
       return res.status(404).json({ message: "User not found.❌" });
@@ -72,9 +76,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getMe = async (req: Request, res: Response, next: NextFunction) => {
+const getMeUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await getMeAuthor(req.user._id);
+    const user = await getMeUserService(req.user._id);
 
     if (!user) {
       return res.status(404).json({ message: "User not found ❌" });
@@ -88,7 +92,7 @@ const getMe = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 export default {
-  register,
-  login,
-  getMe,
+  registerUser,
+  loginUser,
+  getMeUser,
 };

@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { RegisterDTO, LoginDTO } from "../Types/auth.type";
 import { AuthorDocument } from "../models/author.model";
 
-export const registerAuthor = async (input: RegisterDTO) => {
+export const registerUserService = async (input: RegisterDTO) => {
   const isAuthorExists: AuthorDocument | null = await authorModele.findOne({
     $or: [{ email: input.email }, { phone: input.phone }],
   });
@@ -29,7 +29,7 @@ export const registerAuthor = async (input: RegisterDTO) => {
   return { user: userObject, accessToken };
 };
 
-export const loginAuthor = async (input: LoginDTO) => {
+export const loginUserService = async (input: LoginDTO) => {
   const user: AuthorDocument | null = await authorModele.findOne({
     $or: [{ email: input.identifier }, { phone: input.identifier }],
   });
@@ -47,7 +47,7 @@ export const loginAuthor = async (input: LoginDTO) => {
   return { user: safeUser, accessToken };
 };
 
-export const getMeAuthor = async (userId: string) => {
+export const getMeUserService = async (userId: string) => {
   const user = await authorModele
     .findById(userId)
     .select("-password -__v")
@@ -56,4 +56,4 @@ export const getMeAuthor = async (userId: string) => {
   return user;
 };
 
-export default { registerAuthor, loginAuthor };
+export default { registerUserService, loginUserService, getMeUserService };

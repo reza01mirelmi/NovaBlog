@@ -1,10 +1,9 @@
 import { Schema, model, Document, Types } from "mongoose";
-import { ModelAuthorsType } from "../Types/author.type";
+import { AuthorDTO } from "../Types/author.type";
 
-export type AuthorDocument = ModelAuthorsType &
-  Document & { _id: Types.ObjectId };
+export type AuthorDocument = AuthorDTO & Document & { _id: Types.ObjectId };
 
-const authorSchema = new Schema<ModelAuthorsType>(
+const authorSchema = new Schema<AuthorDTO>(
   {
     name: {
       type: String,

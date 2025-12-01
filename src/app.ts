@@ -1,14 +1,14 @@
 import express, { Request, Response, NextFunction } from "express";
-// import authorRouter from "./routes/author.routes";
-// import postRouter from "./routes/post.routes";
 import authRouter from "./routes/auth.routes";
+import authorRouter from "./routes/author.routes";
+// import postRouter from "./routes/post.routes";
 
 const app = express();
 app.use(express.json());
 
-// app.use("/api/authors", authorRouter);
-// app.use("/api/posts", postRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/authors", authorRouter);
+// app.use("/api/posts", postRouter);
 
 app.get("/api", (req: Request, res: Response) => {
   res.status(200).json({ message: "hello" });

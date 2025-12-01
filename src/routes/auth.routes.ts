@@ -3,10 +3,10 @@ import authControllers from "./../controllers/auth.controller";
 import verificationToken from "./../middlewares/verificationToken.middleware";
 const router = express.Router();
 
-router.route("/register").post(authControllers.register);
+router.route("/register").post(authControllers.registerUser);
 
-router.route("/login").post(authControllers.login);
+router.route("/login").post(authControllers.loginUser);
 
-router.route("/me").get(verificationToken, authControllers.getMe);
+router.route("/me").get(verificationToken, authControllers.getMeUser);
 
 export default router;
