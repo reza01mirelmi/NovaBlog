@@ -7,21 +7,20 @@ const schema = {
     type: "string",
     min: 3,
     max: 150,
-    required: true,
-    empty: false,
+    optional: true,
   },
   content: {
     type: "string",
     min: 10,
-    required: true,
-    empty: false,
+    optional: true,
+  },
+  status: {
+    type: "enum",
+    values: ["draft", "pending", "published", "rejected"],
+    optional: true,
   },
   image: { type: "string", optional: true },
-  status: {
-    type: "boolean",
-    optional: true,
-    default: false,
-  },
+
   $$strict: true,
 };
 

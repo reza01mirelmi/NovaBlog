@@ -4,7 +4,11 @@ import { AuthorDTO } from "./../Types/author.type";
 import { AuthorDocument } from "../models/author.model";
 
 export const getAllAuthorsService = async () => {
-  const authors = await authorModele.find({}).select("-password -__v").lean();
+  const authors = await authorModele
+    .find({})
+    .populate("posts", "title status")
+    .select("-password -__v")
+    .lean();
   return authors;
 };
 
@@ -79,7 +83,7 @@ export const updateAuthorService = async (
     author.passwordChangedAt = new Date();
     isChanged = true;
   }
-    
+
   if (!isChanged) {
     return { ok: false, code: 400, message: "No changes detected ❌" };
   }

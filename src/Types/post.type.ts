@@ -4,8 +4,8 @@ export interface modelPostType {
   title: string;
   content: string;
   authorId: Types.ObjectId;
-  image?: string;
-  status: "draft" | "pending" | "published" | "rejected";
+  image?: string | null;
+  status?: "draft" | "pending" | "published" | "rejected";
   createdAt?: Date;
   updatedAt?: Date;
 }

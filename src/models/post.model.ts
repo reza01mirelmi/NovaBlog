@@ -1,5 +1,8 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 import { modelPostType } from "../Types/post.type";
+
+export type PostDocument = modelPostType & Document & { _id: Types.ObjectId };
+
 const postSchema = new Schema<modelPostType>(
   {
     title: {
@@ -11,12 +14,12 @@ const postSchema = new Schema<modelPostType>(
       required: true,
     },
     authorId: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "Author",
-      required: true,
     },
     image: {
       type: String,
+      empty: false,
     },
     status: {
       type: String,
@@ -26,5 +29,6 @@ const postSchema = new Schema<modelPostType>(
   },
   { timestamps: true, collection: "posts" }
 );
-
+postSchema.set("toJSON", { virtuals: true });
+postSchema.set("toObject", { virtuals: true });
 export default model<modelPostType>("posts", postSchema);
