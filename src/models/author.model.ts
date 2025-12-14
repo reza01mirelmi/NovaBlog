@@ -34,7 +34,7 @@ const authorSchema = new Schema<AuthorDTO>(
 );
 
 authorSchema.virtual("posts", {
-  ref: "Post",
+  ref: "posts",
   localField: "_id",
   foreignField: "authorId",
 });
