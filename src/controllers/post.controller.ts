@@ -9,6 +9,7 @@ import {
   getPostAuthorService,
   updatePostService,
   deletePostService,
+  updateStatusService,
 } from "./../services/post.service";
 import { modelPostType } from "../Types/post.type";
 
@@ -117,26 +118,48 @@ const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const postId = req.params.id;
     const authorId = req.user._id;
-    const role = req.user.role;
-    const status = req.body.status;
-    const data: modelPostType = req.body;
+    const data = req.body;
 
     const validBody = validPostUpdate(data);
     if (validBody !== true) {
       return res.status(400).json(validBody);
     }
 
-    const result = await updatePostService(
-      postId,
-      authorId,
-      role,
-      data,
-      status
-    );
+    const imageURL = req.file
+      ? `${req.protocol}://${req.get("host")}/${req.file.path.replace(
+          /\\/g,
+          "/"
+        )}`
+      : undefined;
 
-    return res
-      .status(result.code)
-      .json({ message: result.message, post: result.post || undefined });
+    const input = { data, image: imageURL };
+
+    const result = await updatePostService(authorId, postId, input);
+
+    return res.status(result.code).json({
+      message: result.message,
+      post: result.post || undefined,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const postId = req.params.id;
+    const { status } = req.body;
+
+    const result = await updateStatusService(postId, status);
+
+    return res.status(result.code).json({
+      message: result.message,
+      post: result.post || undefined,
+    });
   } catch (erorr) {
     next(erorr);
   }
@@ -160,8 +183,9 @@ export default {
   createPost,
   getPost,
   getAllPost,
-  updatePost,
   deletePost,
   getPostMe,
+  updatePost,
+  updateStatus,
   getPostAuthor,
 };

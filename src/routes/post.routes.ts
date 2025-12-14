@@ -16,6 +16,15 @@ post
   .route("/author")
   .get(verifytokenMidd, checkAdmin, postControllers.getPostAuthor);
 
+post
+  .route("/admin/:id")
+  .put(
+    validObjectId("id"),
+    verifytokenMidd,
+    checkAdmin,
+    postControllers.updateStatus
+  );
+
 post.route("/me").get(verifytokenMidd, postControllers.getPostMe);
 
 post

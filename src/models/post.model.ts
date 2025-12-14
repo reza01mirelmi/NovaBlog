@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, model } from "mongoose";
+import mongoose, { Schema, Types, Document, model } from "mongoose";
 import { modelPostType } from "../Types/post.type";
 
 export type PostDocument = modelPostType & Document & { _id: Types.ObjectId };
@@ -21,6 +21,8 @@ const postSchema = new Schema<modelPostType>(
       type: String,
       empty: false,
     },
+    imageHash: { type: String, required: false },
+
     status: {
       type: String,
       enum: ["draft", "pending", "published", "rejected"],
@@ -31,4 +33,5 @@ const postSchema = new Schema<modelPostType>(
 );
 postSchema.set("toJSON", { virtuals: true });
 postSchema.set("toObject", { virtuals: true });
+
 export default model<modelPostType>("posts", postSchema);

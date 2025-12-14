@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import modelPost from "../models/post.model";
 import { modelPostType } from "../Types/post.type";
+import { UpdatableFields } from "../Types/post.type";
 
 const createPostService = async (input: modelPostType, authorId: string) => {
   console.log(authorId);
@@ -146,68 +147,76 @@ const getPostAuthorService = async (
 };
 
 const updatePostService = async (
-  postId: string,
   authorId: string,
-  role: string,
-  data: modelPostType,
-  status?: string
+  postId: string,
+  input: UpdatableFields
 ) => {
-  const idPost = new Types.ObjectId(postId);
-  const idAuthor = new Types.ObjectId(authorId);
-
-  const existingPost = await modelPost.findById(idPost).lean();
-
-  if (!existingPost) {
-    return { ok: false, code: 404, message: "Post not found.❌" };
-  }
-
-  let updates: Partial<modelPostType> = {};
-
-  if (
-    typeof data.title === "string" &&
-    data.title.trim() !== existingPost.title
-  ) {
-    updates.title = data.title.trim();
-  }
-  if (
-    typeof data.content === "string" &&
-    data.content.trim() !== existingPost.content
-  ) {
-    updates.content = data.content.trim();
-  }
-  const allowedStatus = ["draft", "pending", "published", "rejected"] as const;
-
-  if (role === "ADMIN" && status && allowedStatus.includes(status as any)) {
-    updates.status = status as (typeof allowedStatus)[number];
-  }
-
-  if (Object.keys(updates).length === 0) {
-    return { ok: false, code: 409, message: "No changes to update❌" };
-  }
-
-  let post;
-  if (role === "USER") {
-    post = await modelPost.findOneAndUpdate(
-      { _id: idPost, authorId: idAuthor },
-      { $set: updates },
-      { new: true }
-    );
-  } else if (role === "ADMIN") {
-    post = await modelPost.findByIdAndUpdate(
-      idPost,
-      { $set: updates },
-      { new: true }
-    );
-  }
-
+  const post = await modelPost.findById(postId);
   if (!post) {
-    return { ok: false, code: 404, message: "Update failed.❌" };
+    return { ok: false, code: 404, message: "Author not found❌" };
   }
+  if (post.authorId.toString() !== authorId.toString()) {
+    return { ok: false, code: 403, message: "Unauthorized ❌" };
+  }
+  let isChanged = false;
+  const allowedUpdates: (keyof UpdatableFields)[] = [
+    "title",
+    "content",
+    "image",
+  ];
+
+  for (let key of allowedUpdates) {
+    const value = input[key];
+
+    if (key === "image" && value) {
+      if (value === post.image) {
+        return { ok: false, code: 409, message: "This image already exists❌" };
+      }
+      post.image = value;
+      isChanged = true;
+    } else if (typeof value === "string" && value !== post[key]) {
+      post[key] = value;
+      isChanged = true;
+    }
+  }
+
+  if (!isChanged) {
+    return {
+      ok: false,
+      code: 400,
+      message: "No changes detected ❌",
+    };
+  }
+  await post.save();
 
   return {
     ok: true,
     code: 200,
     message: "Update completed successfully✅",
+    post,
+  };
+};
+
+const updateStatusService = async (postId: string, status: string) => {
+  status = status.trim().toLowerCase();
+  const allowedStatus = ["draft", "pending", "published", "rejected"] as const;
+
+  if (!allowedStatus.includes(status as any)) {
+    return { ok: false, code: 400, message: "Invalid status" };
+  }
+  const post = await modelPost.findOneAndUpdate(
+    { _id: postId },
+    { $set: { status } },
+    { new: true }
+  );
+
+  if (!post) {
+    return { ok: false, code: 404, message: "Update failed.❌" };
+  }
+  return {
+    ok: true,
+    code: 200,
+    message: "Update Status successfully✅",
     post,
   };
 };
@@ -250,5 +259,6 @@ export {
   updatePostService,
   deletePostService,
   getPostMeService,
+  updateStatusService,
   getPostAuthorService,
 };
