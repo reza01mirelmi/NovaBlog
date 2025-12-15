@@ -16,9 +16,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/authors", authorRouter);
 app.use("/api/posts", postRouter);
 
-app.get("/api", (req: Request, res: Response) => {
-  res.status(200).json({ message: "hello" });
-});
 app.use((req: Request, res: Response, next: NextFunction) => {
   const err: any = new Error(`Can't find ${req.originalUrl}`);
   err.statusCode = 404;
